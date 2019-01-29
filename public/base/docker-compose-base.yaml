@@ -1,0 +1,127 @@
+version: '2'
+
+services:
+
+  ca.public.secc.com:
+    container_name: ca.public.secc.com
+    image: hyperledger/fabric-ca:$FABRIC_IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.public.secc.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.public.secc.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${SECC_CA_KEY}
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ../crypto-config/peerOrganizations/public.secc.com/ca/:/etc/hyperledger/fabric-ca-server-config    
+    ports:
+      - 7054:7054
+
+  orderer0.secc.com:
+    container_name: orderer0.secc.com
+    image: hyperledger/fabric-orderer:$FABRIC_IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=SECCOrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - CONFIGTX_ORDERER_ORDERERTYPE=kafka
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafka0:9092,kafka1:9092,kafka2:9092,kafka3:9092]
+      - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+      - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+      - ORDERER_KAFKA_VERBOSE=true
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=false
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/secc.com/orderers/orderer0.secc.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/secc.com/orderers/orderer0.secc.com/tls/:/var/hyperledger/orderer/tls
+    - orderer0.secc.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  orderer1.secc.com:
+    container_name: orderer1.secc.com
+    image: hyperledger/fabric-orderer:$FABRIC_IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=SECCOrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - CONFIGTX_ORDERER_ORDERERTYPE=kafka
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafka0:9092,kafka1:9092,kafka2:9092,kafka3:9092]
+      - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+      - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+      - ORDERER_KAFKA_VERBOSE=true
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=false
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/secc.com/orderers/orderer1.secc.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/secc.com/orderers/orderer1.secc.com/tls/:/var/hyperledger/orderer/tls
+    - orderer1.secc.com:/var/hyperledger/production/orderer
+    ports:
+      - 8050:7050
+
+  peer0.public.secc.com:
+    container_name: peer0.public.secc.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.public.secc.com
+      - CORE_PEER_ADDRESS=peer0.public.secc.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.public.secc.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.public.secc.com:7051
+      - CORE_PEER_LOCALMSPID=SECCPeerOrgMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/public.secc.com/peers/peer0.public.secc.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/public.secc.com/peers/peer0.public.secc.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.public.secc.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.public.secc.com:
+    container_name: peer1.public.secc.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.public.secc.com
+      - CORE_PEER_ADDRESS=peer1.public.secc.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.public.secc.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.public.secc.com:7051
+      - CORE_PEER_LOCALMSPID=SECCPeerOrgMSP
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/public.secc.com/peers/peer1.public.secc.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/public.secc.com/peers/peer1.public.secc.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.public.secc.com:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053

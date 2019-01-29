@@ -1,0 +1,250 @@
+version: '2'
+
+volumes:
+  peer0.public.secc.com:
+  peer1.public.secc.com:
+  orderer0.secc.com:
+  orderer1.secc.com:
+  ca.public.secc.com:
+
+networks:
+  new:
+
+services:
+
+  zookeeper0:
+    container_name: zookeeper0
+    image: hyperledger/fabric-zookeeper
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+    ports:
+      - 2111
+      - 2888
+      - 3888
+    networks:
+      - new
+
+  zookeeper1:
+    container_name: zookeeper1
+    image: hyperledger/fabric-zookeeper
+    environment:
+      - ZOO_MY_ID=2
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+    ports:
+      - 2111
+      - 2888
+      - 3888
+    networks:
+      - new
+
+  zookeeper2:
+    container_name: zookeeper2
+    image: hyperledger/fabric-zookeeper
+    environment:
+      - ZOO_MY_ID=3
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+    ports:
+      - 2111
+      - 2888
+      - 3888
+    networks:
+      - new
+
+  kafka0:
+    image: hyperledger/fabric-kafka
+    container_name: kafka0
+    environment:
+        - KAFKA_LOG_RETENTION_MS=-1
+        - KAFKA_MESSAGE_MAX_BYTES=103809024
+        - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
+        - KAFKA_BROKER_ID=0
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+        - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+        - KAFKA_MIN_INSYNC_REPLICAS=1
+    ports:
+        - 9092
+    depends_on:
+        - zookeeper0
+        - zookeeper1
+        - zookeeper2
+    links:
+        - zookeeper0:zookeeper0
+        - zookeeper1:zookeeper1
+        - zookeeper2:zookeeper2
+    networks:
+      - new
+
+  kafka1:
+    image: hyperledger/fabric-kafka
+    container_name: kafka1
+    environment:
+        - KAFKA_LOG_RETENTION_MS=-1
+        - KAFKA_MESSAGE_MAX_BYTES=103809024
+        - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
+        - KAFKA_BROKER_ID=1
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+        - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+        - KAFKA_MIN_INSYNC_REPLICAS=1
+    ports:
+        - 9092
+    depends_on:
+        - zookeeper0
+        - zookeeper1
+        - zookeeper2
+    links:
+        - zookeeper0:zookeeper0
+        - zookeeper1:zookeeper1
+        - zookeeper2:zookeeper2
+    networks:
+      - new
+
+  kafka2:
+    image: hyperledger/fabric-kafka
+    container_name: kafka2
+    environment:
+        - KAFKA_LOG_RETENTION_MS=-1
+        - KAFKA_MESSAGE_MAX_BYTES=103809024
+        - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
+        - KAFKA_BROKER_ID=2
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+        - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+        - KAFKA_MIN_INSYNC_REPLICAS=1
+    ports:
+        - 9092
+    depends_on:
+        - zookeeper0
+        - zookeeper1
+        - zookeeper2
+    links:
+        - zookeeper0:zookeeper0
+        - zookeeper1:zookeeper1
+        - zookeeper2:zookeeper2
+    networks:
+      - new
+
+  kafka3:
+    image: hyperledger/fabric-kafka
+    container_name: kafka3
+    environment:
+        - KAFKA_LOG_RETENTION_MS=-1
+        - KAFKA_MESSAGE_MAX_BYTES=103809024
+        - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024
+        - KAFKA_BROKER_ID=3
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+        - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+        - KAFKA_MIN_INSYNC_REPLICAS=1
+    ports:
+        - 9092
+    depends_on:
+        - zookeeper0
+        - zookeeper1
+        - zookeeper2
+    links:
+        - zookeeper0:zookeeper0
+        - zookeeper1:zookeeper1
+        - zookeeper2:zookeeper2
+    networks:
+      - new
+
+  ca.public.secc.com:
+    extends:
+      file: base/docker-compose-base.yaml
+      service: ca.public.secc.com
+    container_name: ca.public.secc.com
+    networks:
+      - new
+
+  couchdb0:
+    container_name: couchdb0
+    image: hyperledger/fabric-couchdb:$COUCHDB_FABRIC_IMAGE_TAG
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 5984:5984
+    networks:
+      - new
+
+  couchdb1:
+    container_name: couchdb1
+    image: hyperledger/fabric-couchdb:$COUCHDB_FABRIC_IMAGE_TAG
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - 5985:5984
+    networks:
+      - new
+
+  peer0.public.secc.com:
+    container_name: peer0.public.secc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.public.secc.com
+    networks:
+      - new
+    depends_on:
+      - couchdb0
+
+  orderer0.secc.com:
+    container_name: orderer0.secc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: orderer0.secc.com
+    networks:
+      - new
+
+  orderer1.secc.com:
+    container_name: orderer1.secc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: orderer1.secc.com
+    networks:
+      - new
+
+  peer1.public.secc.com:
+    container_name: peer1.public.secc.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.public.secc.com
+    networks:
+      - new
+    depends_on:
+      - couchdb1
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$FABRIC_IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      #- CORE_LOGGING_LEVEL=INFO
+      - CORE_PEER_ID=peer0.public.secc.com
+      - CORE_PEER_ADDRESS=peer0.public.secc.com:7051
+      - CORE_PEER_LOCALMSPID=SECCPeerOrgMSP
+      - CORE_PEER_TLS_ENABLED=false
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/public.secc.com/peers/peer0.public.secc.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/public.secc.com/peers/peer0.public.secc.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/public.secc.com/peers/peer0.public.secc.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/public.secc.com/users/Admin@public.secc.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode:/opt/gopath/src/secc/private/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    networks:
+      - new

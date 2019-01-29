@@ -1,0 +1,24 @@
+#Register User
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"local_user_2\",\"local_user\":{\"first_name\":\"Akshay\",\"last_name\":\"Sood\",\"email\":\"akshay.sood@live.com\",\"password\":\"abc123\",\"job_title\":\"Sr. Blockchain Dev\",\"cert\":\"cert here\"}}"],"Function":"UserRegister"}'
+
+#Register Application Server
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"app_server_1\",\"app_server\":{\"ip_address\":\"192.168.0.1\",\"admin_ref\":\"admin_ref_here\",\"cert\":\"cert here\"}}"],"Function":"AppServerRegister"}'
+
+#Submit HIDS Scan
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"scan_1\",\"hids_scan\":{\"server_id\":\"app_server_1\",\"version\":\"version_1\",\"parameters\":\"\",\"master_tree_ref\":\"ref\",\"job_ref\":\"ref\",\"whitelist_ref\":\"ref\",\"scan_result_hash\":\"khskas\",\"server_signature\":\"khdhkd\",\"status\":true,\"incident_report_ref\":\"ref\",\"admin_reference\":\"ref\"}}"],"Function":"HIDSScan"}'
+
+#Submit HIDS Incident Report
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"incident_report_1\",\"hids_incident_report\":{\"server_id\":\"app_server_1\",\"scan_id\":\"scan_1\",\"deleted_files\":\"deleted_files\",\"modified_files\":\"modified_files\",\"created_files\":\"created_files\",\"replay\":\"replay\",\"missed_scan_info\":\"missed_scan_info\",\"email_ref\":\"email_ref\"}}"],"Function":"HIDSIncidentReport"}'
+
+#Submit HIDS Whitelist Report
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"hids_whitelist\",\"hids_whitelist\":{\"server_id\":\"app_server_1\",\"whitelist\":\"whitelist\",\"admin_ref\":\"admin_ref\",\"Version\":\"Version\"}}"],"Function":"HIDSWhitelist"}'
+
+#Submit HIDS Master tree
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"_id\":\"hids_master_tree_1\",\"hids_master_tree\":{\"server_id\":\"app_server_1\",\"master_tree\":\"master_tree\",\"master_tree_hash\":\"master_tree_hash\",\"admin_ref\":\"admin_ref\",\"whitelist_ref\":\"whitelist_ref\",\"scan_id_ref\":\"scan_id_ref\"}}"],"Function":"HIDSMasterTree"}'
+
+#Query incidents
+peer chaincode query -C public.secc -n secc -c '{"Args":["local_user_2"],"Function":"HIDSGetServerIncidents"}'
+
+peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{\"user_id\":\"local_user_2\",\"access_status\":0}"],"Function":"UserChangeAccessStatus"}'
+
+

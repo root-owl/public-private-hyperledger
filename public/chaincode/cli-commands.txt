@@ -1,0 +1,6 @@
+Register User
+# peer chaincode invoke -o orderer0.secc.com:7050 -C public.secc -n secc -c '{"Args":["{ \"member_id\":\"member1\", \"first_name\":\"Akshay\", \"last_name\":\"Sood\", \"public_key\":\"2ed\", \"public_address\":\"India\", \"description\":\"description\", \"email_address\":\"akshay.sood@live.com\", \"password\":\"abc123\", \"role\":1 }"],"Function":"UserRegister"}'
+
+Login User
+# peer chaincode query -C public.secc -n secc -c '{"Args":["{\"email\":\"akshay.sood@live.com\",\"password\":\"abc123\",\"role\":1}"],"Function":"UserLogin"}'
+
