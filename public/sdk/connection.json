@@ -7,16 +7,16 @@
             "timeout": {
                 "peer": {
                     "endorser": "300",
-                    "eventHub":"300",
-                    "eventReg":"300"
+                    "eventHub": "300",
+                    "eventReg": "300"
                 },
                 "orderer": "300"
             }
         }
     },
-    "config":{
-        "chaincode_name":"secc",
-        "channel_name":"public.secc"
+    "config": {
+        "chaincode_name": "secc",
+        "channel_name": "public.secc"
     },
     "channels": {
         "public.secc": {
@@ -26,17 +26,17 @@
             ],
             "peers": {
                 "peer0.public.secc.com": {
-                    "endorsingPeer":true,
-                    "chaincodeQuery":true,
-                    "ledgerQuery":true,
-                    "eventSource":true,
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true,
                     "discover": true
-                    },
-                "peer1.public.secc.com":{
-                    "endorsingPeer":true,
-                    "chaincodeQuery":true,
-                    "ledgerQuery":true,
-                    "eventSource":true,
+                },
+                "peer1.public.secc.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true,
                     "discover": true
                 }
             }
@@ -52,75 +52,75 @@
             "certificateAuthorities": [
                 "ca.public.secc.com"
             ],
-            "adminPrivateKey":{
-                "path":"crypto-config/peerOrganizations/public.secc.com/users/Admin@public.secc.com/msp/keystore/f1c58aff7fa0806139ceb41a6000abaf3f92146a45aa8de31bd2b3dbfcdb4590_sk"
-            },"signedCert":{
-                "path":"crypto-config/peerOrganizations/public.secc.com/users/Admin@public.secc.com/msp/signcerts/Admin@public.secc.com-cert.pem"
+            "adminPrivateKey": {
+                "path": "crypto-config/peerOrganizations/public.secc.com/users/Admin@public.secc.com/msp/keystore/f1c58aff7fa0806139ceb41a6000abaf3f92146a45aa8de31bd2b3dbfcdb4590_sk"
+            },
+            "signedCert": {
+                "path": "crypto-config/peerOrganizations/public.secc.com/users/Admin@public.secc.com/msp/signcerts/Admin@public.secc.com-cert.pem"
             }
-
         }
     },
     "orderers": {
         "orderer0.secc.com": {
             "url": "grpc://103.113.157.125:7050",
-            "grpcOptions":{
-                "ssl-target-name-override":"orderer0.secc.com",
-                "grpc-max-send-message-length":15,
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer0.secc.com",
+                "grpc-max-send-message-length": -1,
                 "grpc.keepalive_time_ms": 120000,
                 "grpc.keepalive_timeout_ms": 20000,
                 "grpc.http2.min_time_between_pings_ms": 120000,
                 "grpc.http2.max_pings_without_data": 0,
                 "grpc.keepalive_permit_without_calls": 1
             },
-            "tlsCACerts":{
-                "path":"crypto-config/ordererOrganizations/secc.com/tlsca/tlsca.secc.com-cert.pem"
+            "tlsCACerts": {
+                "path": "crypto-config/ordererOrganizations/secc.com/tlsca/tlsca.secc.com-cert.pem"
             }
         },
         "orderer1.secc.com": {
             "url": "grpc://103.113.157.125:8050",
-            "grpcOptions":{
-                "ssl-target-name-override":"orderer1.secc.com",
-                "grpc-max-send-message-length":15,
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer1.secc.com",
+                "grpc-max-send-message-length": -1,
                 "grpc.keepalive_time_ms": 120000,
                 "grpc.keepalive_timeout_ms": 20000,
                 "grpc.http2.min_time_between_pings_ms": 120000,
                 "grpc.http2.max_pings_without_data": 0,
                 "grpc.keepalive_permit_without_calls": 1
             },
-            "tlsCACerts":{
-                "path":"crypto-config/ordererOrganizations/secc.com/tlsca/tlsca.secc.com-cert.pem"
+            "tlsCACerts": {
+                "path": "crypto-config/ordererOrganizations/secc.com/tlsca/tlsca.secc.com-cert.pem"
             }
         }
     },
     "peers": {
         "peer0.public.secc.com": {
             "url": "grpc://103.113.157.125:7051",
-            "eventUrl":"grpc://103.113.157.125:7053",
-            "grpcOptions":{
-                "ssl-target-name-override":"peer0.public.secc.com",
+            "eventUrl": "grpc://103.113.157.125:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.public.secc.com",
                 "grpc.keepalive_time_ms": 120000,
                 "grpc.keepalive_timeout_ms": 20000,
                 "grpc.http2.min_time_between_pings_ms": 120000,
                 "grpc.http2.max_pings_without_data": 0,
                 "grpc.keepalive_permit_without_calls": 1
             },
-            "tlsCACerts":{
-                "path":"crypto-config/peerOrganizations/public.secc.com/tlsca/tlsca.public.secc.com-cert.pem"
+            "tlsCACerts": {
+                "path": "crypto-config/peerOrganizations/public.secc.com/tlsca/tlsca.public.secc.com-cert.pem"
             }
         },
         "peer1.public.secc.com": {
             "url": "grpc://103.113.157.125:8051",
-            "eventUrl":"grpc://103.113.157.125:8053",
-            "grpcOptions":{
-                "ssl-target-name-override":"peer1.public.secc.com",
+            "eventUrl": "grpc://103.113.157.125:8053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.public.secc.com",
                 "grpc.keepalive_time_ms": 120000,
                 "grpc.keepalive_timeout_ms": 20000,
                 "grpc.http2.min_time_between_pings_ms": 120000,
                 "grpc.http2.max_pings_without_data": 0,
                 "grpc.keepalive_permit_without_calls": 1
             },
-            "tlsCACerts":{
-                "path":"crypto-config/peerOrganizations/public.secc.com/tlsca/tlsca.public.secc.com-cert.pem"
+            "tlsCACerts": {
+                "path": "crypto-config/peerOrganizations/public.secc.com/tlsca/tlsca.public.secc.com-cert.pem"
             }
         }
     },
@@ -128,17 +128,17 @@
         "ca.public.secc.com": {
             "url": "http://103.113.157.125:7054",
             "caName": "ca.public.secc.com",
-            "registrar":[
+            "registrar": [
                 {
-                    "enrollId":"admin",
-                    "enrollSecret":"adminpw"
+                    "enrollId": "admin",
+                    "enrollSecret": "adminpw"
                 }
             ],
-            "tlsCACerts":{
-                "path":"crypto-config/peerOrganizations/public.secc.com/ca/ca.public.secc.com-cert.pem"
+            "tlsCACerts": {
+                "path": "crypto-config/peerOrganizations/public.secc.com/ca/ca.public.secc.com-cert.pem"
             },
-            "httpOptions":{
-                "verify":false
+            "httpOptions": {
+                "verify": false
             }
         }
     }

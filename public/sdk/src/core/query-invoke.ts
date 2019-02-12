@@ -27,8 +27,8 @@ export default class FabricComm {
         username: string,
         functionName: string,
         data: any,
-        chaincode: string): Promise<ResponseModel> {
-
+        chaincode: string): Promise<any> {
+        console.log(connectionProfilePath)
         try {
             const userExistenceErr = await this.checkUserExistence(username);
 
@@ -38,14 +38,15 @@ export default class FabricComm {
 
             // Create a new gateway for connecting to our peer node.
             const gateway = new Gateway();
-            await gateway.connect(connectionProfile, { wallet, identity: username, discovery: { enabled: true } });
-            // Get the network (channel) our contract is deployed to.
+            await gateway.connect(connectionProfile, { wallet, identity: username, discovery: { asLocalhost: false, enabled: false } });
+            // // Get the network (channel) our contract is deployed to.
             const network = await gateway.getNetwork(channel);
-            // Get the contract from the network.
+            // // Get the contract from the network.
             const contract = network.getContract(chaincode);
             const respBuffer = await contract.submitTransaction(functionName, JSON.stringify(data));
-
+            gateway.disconnect();
             return JSON.parse(respBuffer.toString());
+            // return "ok"
         } catch (error) {
             console.log(error)
             let response = new ResponseModel(error.message, 500);
